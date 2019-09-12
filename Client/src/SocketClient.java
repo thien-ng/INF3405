@@ -12,7 +12,7 @@ public class SocketClient {
 		try {
 			
 			clientSocket = new Socket(IpAddress, portNumber);
-			sendToServer("Penis");
+			sendToServer("PENIS");
 	
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
