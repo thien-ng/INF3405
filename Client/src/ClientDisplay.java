@@ -1,12 +1,16 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class ClientDisplay {
 	
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
-//	private String CONSOLE_FORMAT = "[%s:%d - ]"
+	private String CONSOLE_FORMAT = "[%s:%d - %s]: ";
 	
 	private SocketClient socketClient;
+	
+	private CommandRunner commandRunner;
 	
 	private int portNumber;
 	
@@ -38,18 +42,22 @@ public class ClientDisplay {
 		this.IpAddress = ipInput;
 
 		socketClient.initializeSocket(ipInput, portNumber);
+		commandRunner = new CommandRunner(socketClient, IpAddress, portNumber);
 	}
 	
 	public void startConsole() {
 		Scanner scan = new Scanner(System.in);
-		
+
 		while (true) {
-			System.out.println(IpAddress);
-			
-			
+			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
+			String command = scan.nextLine();
+			commandRunner.runCommandLine(command);
 		}
-		
-		
+	}
+	
+	
+	private String currentDate() {
+		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
 	}
 	
 	

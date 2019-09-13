@@ -12,7 +12,6 @@ public class SocketClient {
 		try {
 			
 			clientSocket = new Socket(IpAddress, portNumber);
-			sendToServer("PENIS");
 	
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
