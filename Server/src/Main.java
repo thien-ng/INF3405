@@ -30,7 +30,7 @@ public class Main {
 				System.out.println(strings);
 				
 				out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-				out.writeObject("VAGIN JUTEUX");
+				out.writeObject("Yo");
 				out.flush();
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
