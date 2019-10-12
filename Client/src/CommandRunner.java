@@ -23,7 +23,7 @@ public class CommandRunner {
 	
 	public void runCommandLine(String commandLine) {
 		Socket clientSocket = null;
-		String IP_ADDRESS = "10.48.60.220";
+		String IP_ADDRESS = "192.168.2.34";
 		System.out.println("test");
 		try {
 			try {
@@ -43,7 +43,7 @@ public class CommandRunner {
 			}
 			
 		} catch (Exception e) {
-			System.out.println("test " + e.getMessage());
+			System.out.println(e.getMessage());
 		}
 	}
 	

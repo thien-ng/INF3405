@@ -1,5 +1,4 @@
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
@@ -14,9 +13,9 @@ public class ClientHandler extends Thread{
 	}
 	
 	public void run() {
+		System.out.println("\nRun command");
 		
 		try {
-			
 			
 			ObjectInputStream data = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			String strings = (String) data.readObject();
