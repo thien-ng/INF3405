@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -32,9 +34,13 @@ public class ClientDisplay {
 		} while (!ipInput.matches(REGEX_IP_ADDRESS));
 		
 		do {
-			System.out.print("Enter a valid Port Number between 5000 and 5050: ");
-			String portInput = scan.nextLine();
-			portNumber = Integer.parseInt(portInput);
+			try {
+				System.out.print("Enter a valid Port Number between 5000 and 5050: ");
+				String portInput = scan.nextLine();
+				portNumber = Integer.parseInt(portInput);
+			} catch (Exception e) {
+				portNumber = -1;
+			}
 			
 		} while (portNumber < 5000 || portNumber > 5050);
 		
@@ -42,11 +48,12 @@ public class ClientDisplay {
 		this.IpAddress = ipInput;
 
 		socketClient.initializeSocket(ipInput, portNumber);
-		commandRunner = new CommandRunner(socketClient, IpAddress, portNumber);
+		commandRunner = new CommandRunner(socketClient, ipInput, portNumber);
 	}
 	
 	public void startConsole() {
 		Scanner scan = new Scanner(System.in);
+		
 
 		while (true) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
