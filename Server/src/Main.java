@@ -5,21 +5,16 @@ import java.util.Scanner;
 public class Main {
 	
 	private static ServerSocket listener;
-	
-	private static String SERVER_IP = "192.168.2.28";
 
 	public static void main(String[] args) throws Exception{
 		
 		int clientNumber = 0;
 		int serverPort = getInformations();
 
-		
-		InetAddress serverIP = InetAddress.getByName(SERVER_IP);
-		listener = new ServerSocket();
-		listener.bind(new InetSocketAddress(serverIP, serverPort));
+		listener = new ServerSocket(serverPort);
 		listener.setReuseAddress(true);
 		
-		System.out.format("The server is running on %s:%d\n", SERVER_IP, serverPort);
+		System.out.format("The server is running on %d\n", serverPort);
 
 
 		try {
@@ -31,7 +26,7 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
-//			listener.close();
+			listener.close();
 		}
 	}
 	

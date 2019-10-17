@@ -1,13 +1,18 @@
-import java.io.BufferedInputStream;
-import java.io.ObjectInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+
+//AJOUTER LE COMMAND LINE CONSOLE FORMAT
 
 public class ClientHandler extends Thread{
 
@@ -16,6 +21,10 @@ public class ClientHandler extends Thread{
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
 	private Socket socket;
+	
+	private DataInputStream in;
+	
+	private DataOutputStream out;
 
 	private int clientNumber;
 	
@@ -33,20 +42,21 @@ public class ClientHandler extends Thread{
 		
 		System.out.println("working with client: " + clientNumber);
 		
-		try {
-			ObjectInputStream data = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			String command = (String) data.readObject();
-			System.out.println(command);
-			runCommandLine(command);
-			
-	
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		while(true) {
+			try {
+					in = new DataInputStream(socket.getInputStream());
+					out = new DataOutputStream(socket.getOutputStream());
+
+					runCommandLine(in.readUTF().toString());
+		
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		
 	}
 	
-	private void runCommandLine(String command) {
+	private void runCommandLine(String command) throws Exception {
 		
 		String[] commands = command.split(" ");
 		
@@ -55,10 +65,11 @@ public class ClientHandler extends Thread{
 		switch(commands[0]) {
 			
 			case "cd":
-				runCd(commands);
+				executeCD(commands);
 				break;
 			
 			case "ls":
+				executeLS(commands);
 				break;
 			
 			case "mkdir":
@@ -77,30 +88,49 @@ public class ClientHandler extends Thread{
 		
 	}
 	
-	private void runCd(String[] commands) {
-		
-		System.out.println("RUN CD");
-
-		List<String> directoryList = new ArrayList<>();
-
-		try {
-			@SuppressWarnings("resource")
-			Stream<Path> walk = Files.walk(Paths.get(currentDirectory));
-			directoryList = walk.filter(Files::isDirectory)
-									  .map(Path::getFileName)
-									  .map(x -> x.toString())
-									  .collect(Collectors.toList());
-
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+	@SuppressWarnings("resource")
+	private void executeCD(String[] commands) throws Exception{
+		if (commands.length == 1) {
+			return;
 		}
-		
-		if (directoryList.contains(commands[1].toLowerCase())) {
+
+		File file = new File(currentDirectory);
+		String[] directories = file.list(new FilenameFilter() {
+		  @Override
+		  public boolean accept(File current, String name) {
+		    return new File(current, name).isDirectory();
+		  }
+		});
+		List<String> directoryList = Arrays.asList(directories);
+		System.out.println(Arrays.toString(directories));
+
+		if (commands[1].equals("..")) {
+			currentDirectory = Paths.get(currentDirectory).getParent().toString();
+			
+		} else if (directoryList.contains(commands[1].toLowerCase())) {
 			currentDirectory += "\\" + commands[1];
-			System.out.println(currentDirectory);
+			
+		} else {
+			throw new Exception("The system cannot find the path specified.");
 		}
+
 		System.out.println(currentDirectory);
+	}
+	
+	private void executeLS(String[] commands) throws Exception {
+
+		if (commands.length != 1) {
+			throw new Exception("Unknown command");
+		}
+		
+		File file = new File(currentDirectory);
+		String[] directories = file.list();
+		String filenames = "";
+		for (String name : directories) {
+			filenames += (name + "\n");
+		}
+
+		out.writeUTF(filenames);
 	}
 	
 }

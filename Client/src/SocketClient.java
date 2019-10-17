@@ -1,5 +1,5 @@
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class SocketClient {
@@ -21,8 +21,8 @@ public class SocketClient {
 	public <T> void sendToServer(T object) {
 		try {
 		
-			ObjectOutputStream objectOutput = new ObjectOutputStream(clientSocket.getOutputStream());
-			objectOutput.writeObject(object);
+			DataOutputStream objectOutput = new DataOutputStream(clientSocket.getOutputStream());
+			objectOutput.writeUTF((String) object);
 			objectOutput.flush();
 			
 		} catch (IOException e) {

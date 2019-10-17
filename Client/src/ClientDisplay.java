@@ -54,7 +54,6 @@ public class ClientDisplay {
 	public void startConsole() {
 		Scanner scan = new Scanner(System.in);
 		
-
 		while (true) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
 			String command = scan.nextLine();
