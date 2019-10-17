@@ -1,3 +1,5 @@
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -9,17 +11,18 @@ public class ClientDisplay {
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
 	private String CONSOLE_FORMAT = "[%s:%d - %s]: ";
-	
-	private SocketClient socketClient;
-	
-	private CommandRunner commandRunner;
-	
+
 	private int portNumber;
 	
 	private String IpAddress;
 	
+	private Socket socketClient;
+	
+	private DataOutputStream objectOutput;
+	
+	private DataInputStream objectInput;
+	
 	public ClientDisplay() {
-		socketClient = new SocketClient();
 	}
 	
 	public void getInformations() {
@@ -47,8 +50,18 @@ public class ClientDisplay {
 		this.portNumber = portNumber;
 		this.IpAddress = ipInput;
 
-		socketClient.initializeSocket(ipInput, portNumber);
-		commandRunner = new CommandRunner(socketClient, ipInput, portNumber);
+	}
+	
+	public void initializeSocket() {
+		try {
+			
+			socketClient = new Socket(IpAddress, portNumber);
+			objectOutput = new DataOutputStream(socketClient.getOutputStream());
+			objectInput = new DataInputStream(socketClient.getInputStream());
+	
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void startConsole() {
@@ -56,16 +69,28 @@ public class ClientDisplay {
 		
 		while (true) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
-			String command = scan.nextLine();
-			commandRunner.runCommandLine(command);
+			String command = scan.nextLine();			
+			
+			try {
+				
+				objectOutput.writeUTF(command);
+				objectOutput.flush();
+				
+				String data = objectInput.readUTF();
+				System.out.println(data);
+				
+			
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			
+			
 		}
 	}
 	
 	
 	private String currentDate() {
 		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
-	}
-	
-	
+	}	
 
 }

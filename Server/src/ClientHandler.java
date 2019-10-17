@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +51,12 @@ public class ClientHandler extends Thread{
 					runCommandLine(in.readUTF().toString());
 		
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				try {
+					out.writeUTF(e.getMessage());
+					out.flush();
+				} catch (IOException e1) {
+					System.out.println(e1.getMessage());
+				}
 			}
 		}
 		
@@ -73,6 +79,7 @@ public class ClientHandler extends Thread{
 				break;
 			
 			case "mkdir":
+				executeMkdir(commands);
 				break;
 				
 			case "upload":
@@ -88,9 +95,12 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	// PROBLEME AVEC CD pour ~directoryList.contains(commands[1].toLowerCase()
 	@SuppressWarnings("resource")
 	private void executeCD(String[] commands) throws Exception{
 		if (commands.length == 1) {
+			out.writeUTF("");
+			out.flush();
 			return;
 		}
 
@@ -98,7 +108,7 @@ public class ClientHandler extends Thread{
 		String[] directories = file.list(new FilenameFilter() {
 		  @Override
 		  public boolean accept(File current, String name) {
-		    return new File(current, name).isDirectory();
+		    return new File(current, name.replaceAll("\\s+","")).isDirectory();
 		  }
 		});
 		List<String> directoryList = Arrays.asList(directories);
@@ -113,8 +123,10 @@ public class ClientHandler extends Thread{
 		} else {
 			throw new Exception("The system cannot find the path specified.");
 		}
-
-		System.out.println(currentDirectory);
+		
+		out.writeUTF("");
+		out.flush();
+		
 	}
 	
 	private void executeLS(String[] commands) throws Exception {
@@ -131,6 +143,24 @@ public class ClientHandler extends Thread{
 		}
 
 		out.writeUTF(filenames);
+		out.flush();
 	}
 	
+	private void executeMkdir(String[] commands) throws Exception{
+		
+		if (commands.length != 2) {
+			throw new Exception("Must contain argument for directory name.");
+		}
+		
+		File directory = new File(currentDirectory + "\\" + commands[1]);
+		
+		if (directory.exists()) {
+			throw new Exception("Directory already exist");
+		} else {
+			directory.mkdirs();
+			out.writeUTF("");
+			out.flush();
+		}
+		
+	}
 }

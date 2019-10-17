@@ -1,5 +1,3 @@
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.Scanner;
 public class Main {
