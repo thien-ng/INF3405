@@ -4,20 +4,18 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 //AJOUTER LE COMMAND LINE CONSOLE FORMAT
 
 public class ClientHandler extends Thread{
 
-	private String CONSOLE_FORMAT = "[%s:%d - %s]: ";
+	private String CONSOLE_FORMAT = "[%s:%d - %s]: %s";
 	
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
@@ -65,8 +63,8 @@ public class ClientHandler extends Thread{
 	private void runCommandLine(String command) throws Exception {
 		
 		String[] commands = command.split(" ");
-		
-		System.out.println(commands[0]);
+		// TODO remove dash before ip address
+		System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress(), socket.getLocalPort(), currentDate(), command + "\n"));
 		
 		switch(commands[0]) {
 			
@@ -163,4 +161,8 @@ public class ClientHandler extends Thread{
 		}
 		
 	}
+	
+	private String currentDate() {
+		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
+	}	
 }
