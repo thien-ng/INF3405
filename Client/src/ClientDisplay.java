@@ -1,7 +1,6 @@
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -80,17 +79,22 @@ public class ClientDisplay {
 			
 			try {
 				
-				if (commands[0] == "upload") {
+				switch (commands[0]) {
+					case "upload":
+						executeUpload(commands, fis, bis, command);
+						break;
 					
-					executeUpload(commands, fis, bis, command);
-				} else {					
-					objectOutput.writeUTF(command);
-					objectOutput.flush();
+					case "download":
+						executeDownload():
+						break;
 					
-					String data = objectInput.readUTF();
-					System.out.println(data);
-				}
-				
+					default:
+						objectOutput.writeUTF(command);
+						objectOutput.flush();
+						
+						String data = objectInput.readUTF();
+						System.out.println(data);
+				}				
 			
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
@@ -115,6 +119,10 @@ public class ClientDisplay {
 			objectOutput.writeUTF(command + " " + uploadedFile.length());
 			objectOutput.flush();
 		}
+	}
+	
+	private void executeDownload() {
+		
 	}
 	
 	
