@@ -1,6 +1,8 @@
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.Socket;
@@ -164,12 +166,34 @@ public class ClientHandler extends Thread{
 	}
 	
 	private void executeUpload(String[] commands) throws Exception {
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
 		
 		if (commands.length != 3) {
 			throw new Exception("Must contain argument for file name.");
 		}
 		
-		System.out.println(commands[2]);
+		try {			
+			int fileSize = Integer.parseInt(commands[2]);
+			byte[] byteArray = new byte [fileSize];
+			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
+			bos = new BufferedOutputStream(fos);
+			int bytesRead = in.read(byteArray, 0, byteArray.length);
+			int current = bytesRead;
+			
+			do {
+				bytesRead = in.read(byteArray, current, (byteArray.length - current));
+				if (bytesRead >= 0) current += bytesRead;
+			} while (bytesRead < fileSize);
+			
+			bos.write(byteArray, 0, current);
+			bos.flush();
+		} catch (NumberFormatException e) {
+			System.out.println("Arg error: " + e.getMessage());
+		} finally {
+			if (fos != null) fos.close();
+			if (bos != null) bos.close();
+		}
 		
 		
 	}
