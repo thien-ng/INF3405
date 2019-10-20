@@ -143,7 +143,7 @@ public class ClientDisplay {
 			int totalRead = 0;
 			int remaining = fileSize;
 			
-			while((read = objectInput.read(bytes, 0, Math.min(bytes.length, remaining))) != -1 ) {
+			while((read = objectInput.read(bytes, 0, Math.min(bytes.length, remaining))) > 0 ) {
 				totalRead += read;
 				remaining -= read;
 				fos.write(bytes, 0 , read);
