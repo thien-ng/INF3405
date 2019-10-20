@@ -134,13 +134,20 @@ public class ClientDisplay {
 		
 		try {			
 			String currentDirectory = System.getProperty("user.dir");
-			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
+			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);			
 			
 			byte[] bytes = new byte[CHUNK_SIZE];
 			
-			int count;
-			while((count = objectInput.read(bytes)) > 0 )
-				fos.write(bytes, 0 , count);
+			int fileSize = objectInput.readInt();
+			int read = 0;
+			int totalRead = 0;
+			int remaining = fileSize;
+			
+			while((read = objectInput.read(bytes, 0, Math.min(bytes.length, remaining))) != -1 ) {
+				totalRead += read;
+				remaining -= read;
+				fos.write(bytes, 0 , read);
+			}
 			
 		} catch (NumberFormatException e) {
 			System.out.println("Arg error: " + e.getMessage());

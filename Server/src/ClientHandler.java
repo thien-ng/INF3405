@@ -208,13 +208,28 @@ public class ClientHandler extends Thread{
 		if (!fileWanted.exists())
 			throw new Exception("The file specified does not exist in the current repository");
 		
-		long length = fileWanted.length();
-		byte[] bytes = new byte[CHUNK_SIZE];
-		FileInputStream fis = new FileInputStream(fileWanted);
+		out.writeInt((int)fileWanted.length());
+		out.flush();
 		
-		int count;
-		while((count = in.read(bytes)) > 0)
-			out.write(bytes, 0, count);
+		FileInputStream fis = new FileInputStream(commands[1]);
+		byte[] buffer = new byte[CHUNK_SIZE];
+		
+		int read;
+		while((read = fis.read(buffer)) > 0)
+			out.write(buffer, 0, read);
+		
+		fis.close();
+//		
+//		
+//		long length = fileWanted.length();
+//		byte[] bytes = new byte[CHUNK_SIZE];
+//		FileInputStream fis = new FileInputStream(fileWanted);
+//		
+//		int count;
+//		while((count = in.read(bytes)) > 0)
+//			out.write(bytes, 0, count);
+//		
+//		out.flush();
 
 		
 //		long fileSizeLeft = fileToDownload.length();
