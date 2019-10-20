@@ -23,6 +23,8 @@ public class ClientHandler extends Thread{
 	
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
+	private int CHUNK_SIZE = 8 * 1024;
+	
 	private Socket socket;
 	
 	private DataInputStream in;
@@ -197,26 +199,47 @@ public class ClientHandler extends Thread{
 	}
 	
 	private void executeDownload(String[] commands) throws Exception {
+		
 		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name");
 		
-		File fileToDownload = new File(System.getProperty("user.dir"), commands[1]);
+		File fileWanted = new File(System.getProperty("user.dir"), commands[1]);
 		
-		if (!fileToDownload.exists())
+		if (!fileWanted.exists())
 			throw new Exception("The file specified does not exist in the current repository");
 		
-		byte[] byteFile = new byte[(int)fileToDownload.length()];
-		FileInputStream fis = new FileInputStream(fileToDownload);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		bis.read(byteFile, 0, byteFile.length);
+		long length = fileWanted.length();
+		byte[] bytes = new byte[CHUNK_SIZE];
+		FileInputStream fis = new FileInputStream(fileWanted);
 		
-		out.write(byteFile, 0, byteFile.length);
-		out.flush();
-		out.writeUTF(commands[1] + fileToDownload.length());
-		out.flush();
+		int count;
+		while((count = in.read(bytes)) > 0)
+			out.write(bytes, 0, count);
+
 		
+//		long fileSizeLeft = fileToDownload.length();
+//		out.writeLong(fileSizeLeft);
+//		byte[] partOfFile = new byte[1000];
+//		
+//		while (fileSizeLeft > 0) {
+//			int size = in.read(partOfFile);
+//			out.write(partOfFile, 0, size);
+//			fileSizeLeft -= size;
+//		}
+		
+		///////////////////////////////////////
+		
+//		FileInputStream fis = new FileInputStream(fileToDownload);
+//		BufferedInputStream bis = new BufferedInputStream(fis);
+//		bis.read(byteFile, 0, byteFile.length);
+//		
+//		out.write(byteFile, 0, byteFile.length);
+//		out.flush();
+//		out.writeUTF(commands[1] + fileToDownload.length());
+//		out.flush();
+//		
 		if (fis != null) fis.close();
-		if (bis != null) bis.close();
+//		if (bis != null) bis.close();
 	}
 	
 	private String currentDate() {

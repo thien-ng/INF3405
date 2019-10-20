@@ -16,6 +16,8 @@ public class ClientDisplay {
 	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
 	private String CONSOLE_FORMAT = "[%s:%d - %s]: ";
+	
+	private int CHUNK_SIZE = 8 * 1024;
 
 	private int portNumber;
 	
@@ -124,34 +126,26 @@ public class ClientDisplay {
 	}
 	
 	private void executeDownload(String command, String[] commands) throws IOException {
+		
 		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
 		
 		objectOutput.writeUTF(command);
 		objectOutput.flush();
 		
 		try {			
 			String currentDirectory = System.getProperty("user.dir");
-			String[] response = objectInput.readUTF().split(" ");
-	
-			byte[] byteArray = new byte [Integer.parseInt(response[1])];
 			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
-			bos = new BufferedOutputStream(fos);
-			int read = objectInput.read(byteArray, 0, byteArray.length);
-			int current = read;
 			
-			while (read > 0) {
-				read = objectInput.read(byteArray, current, (byteArray.length - current));
-				if (read >= 1) current += read;
-			}
+			byte[] bytes = new byte[CHUNK_SIZE];
 			
-			bos.write(byteArray, 0, current);
-			bos.flush();
+			int count;
+			while((count = objectInput.read(bytes)) > 0 )
+				fos.write(bytes, 0 , count);
+			
 		} catch (NumberFormatException e) {
 			System.out.println("Arg error: " + e.getMessage());
 		} finally {
 			if (fos != null) fos.close();
-			if (bos != null) bos.close();
 		}	
 	}
 	
