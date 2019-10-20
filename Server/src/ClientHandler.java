@@ -178,13 +178,13 @@ public class ClientHandler extends Thread{
 			byte[] byteArray = new byte [fileSize];
 			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
 			bos = new BufferedOutputStream(fos);
-			int bytesRead = in.read(byteArray, 0, byteArray.length);
-			int current = bytesRead;
+			int read = in.read(byteArray, 0, byteArray.length);
+			int current = read;
 			
-			do {
-				bytesRead = in.read(byteArray, current, (byteArray.length - current));
-				if (bytesRead >= 0) current += bytesRead;
-			} while (bytesRead < fileSize);
+			while (read > 0) {
+				read = in.read(byteArray, current, (byteArray.length - current));
+				if (read >= 1) current += read;
+			}
 			
 			bos.write(byteArray, 0, current);
 			bos.flush();
