@@ -1,7 +1,9 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class ClientHandler extends Thread{
 				break;
 				
 			case "download":
+				executeDownload(commands);
 				break;
 				
 			case "exit":
@@ -132,9 +135,8 @@ public class ClientHandler extends Thread{
 	
 	private void executeLS(String[] commands) throws Exception {
 
-		if (commands.length != 1) {
+		if (commands.length != 1)
 			throw new Exception("Unknown command");
-		}
 		
 		File file = new File(currentDirectory);
 		String[] directories = file.list();
@@ -149,9 +151,8 @@ public class ClientHandler extends Thread{
 	
 	private void executeMkdir(String[] commands) throws Exception{
 		
-		if (commands.length != 2) {
+		if (commands.length != 2) 
 			throw new Exception("Must contain argument for directory name.");
-		}
 		
 		File directory = new File(currentDirectory + "\\" + commands[1]);
 		
@@ -169,9 +170,8 @@ public class ClientHandler extends Thread{
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		
-		if (commands.length != 3) {
+		if (commands.length != 3)
 			throw new Exception("Must contain argument for file name.");
-		}
 		
 		try {			
 			int fileSize = Integer.parseInt(commands[2]);
@@ -193,9 +193,30 @@ public class ClientHandler extends Thread{
 		} finally {
 			if (fos != null) fos.close();
 			if (bos != null) bos.close();
-		}
+		}	
+	}
+	
+	private void executeDownload(String[] commands) throws Exception {
+		if (commands.length != 2)
+			throw new Exception("Must contain argument for file name");
 		
+		File fileToDownload = new File(System.getProperty("user.dir"), commands[1]);
 		
+		if (!fileToDownload.exists())
+			throw new Exception("The file specified does not exist in the current repository");
+		
+		byte[] byteFile = new byte[(int)fileToDownload.length()];
+		FileInputStream fis = new FileInputStream(fileToDownload);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		bis.read(byteFile, 0, byteFile.length);
+		
+		out.write(byteFile, 0, byteFile.length);
+		out.flush();
+		out.writeUTF(commands[1] + fileToDownload.length());
+		out.flush();
+		
+		if (fis != null) fis.close();
+		if (bis != null) bis.close();
 	}
 	
 	private String currentDate() {

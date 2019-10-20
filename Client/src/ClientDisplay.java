@@ -1,7 +1,9 @@
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -81,11 +83,11 @@ public class ClientDisplay {
 				
 				switch (commands[0]) {
 					case "upload":
-						executeUpload(commands, fis, bis, command);
+						executeUpload(command, commands, fis, bis);
 						break;
 					
 					case "download":
-						executeDownload():
+						executeDownload(command, commands);
 						break;
 					
 					default:
@@ -106,7 +108,7 @@ public class ClientDisplay {
 		}
 	}
 	
-	private void executeUpload(String[] commands, FileInputStream fis, BufferedInputStream bis, String command) throws IOException {
+	private void executeUpload(String command, String[] commands, FileInputStream fis, BufferedInputStream bis) throws IOException {
 		File uploadedFile = new File(System.getProperty("user.dir"), commands[1]);
 		if (uploadedFile.exists()) {						
 			byte[] byteFile = new byte[(int)uploadedFile.length()];
@@ -121,8 +123,36 @@ public class ClientDisplay {
 		}
 	}
 	
-	private void executeDownload() {
+	private void executeDownload(String command, String[] commands) throws IOException {
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
 		
+		objectOutput.writeUTF(command);
+		objectOutput.flush();
+		
+		try {			
+			String currentDirectory = System.getProperty("user.dir");
+			String[] response = objectInput.readUTF().split(" ");
+	
+			byte[] byteArray = new byte [Integer.parseInt(response[1])];
+			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
+			bos = new BufferedOutputStream(fos);
+			int read = objectInput.read(byteArray, 0, byteArray.length);
+			int current = read;
+			
+			while (read > 0) {
+				read = objectInput.read(byteArray, current, (byteArray.length - current));
+				if (read >= 1) current += read;
+			}
+			
+			bos.write(byteArray, 0, current);
+			bos.flush();
+		} catch (NumberFormatException e) {
+			System.out.println("Arg error: " + e.getMessage());
+		} finally {
+			if (fos != null) fos.close();
+			if (bos != null) bos.close();
+		}	
 	}
 	
 	
