@@ -81,6 +81,7 @@ public class ClientHandler extends Thread{
 				break;
 				
 			case "upload":
+				executeUpload(commands);
 				break;
 				
 			case "download":
@@ -159,6 +160,17 @@ public class ClientHandler extends Thread{
 			out.writeUTF("");
 			out.flush();
 		}
+		
+	}
+	
+	private void executeUpload(String[] commands) throws Exception {
+		
+		if (commands.length != 3) {
+			throw new Exception("Must contain argument for file name.");
+		}
+		
+		System.out.println(commands[2]);
+		
 		
 	}
 	

@@ -1,4 +1,8 @@
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -64,27 +68,52 @@ public class ClientDisplay {
 		}
 	}
 	
-	public void startConsole() {
+	public void startConsole() throws IOException {
 		Scanner scan = new Scanner(System.in);
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
 		
 		while (true) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
-			String command = scan.nextLine();			
+			String command = scan.nextLine();	
+			String[] commands = command.split(" ");
 			
 			try {
 				
-				objectOutput.writeUTF(command);
-				objectOutput.flush();
-				
-				String data = objectInput.readUTF();
-				System.out.println(data);
+				if (commands[0] == "upload") {
+					
+					executeUpload(commands, fis, bis, command);
+				} else {					
+					objectOutput.writeUTF(command);
+					objectOutput.flush();
+					
+					String data = objectInput.readUTF();
+					System.out.println(data);
+				}
 				
 			
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
+			} finally {
+				if (bis != null) bis.close();
 			}
 			
 			
+		}
+	}
+	
+	private void executeUpload(String[] commands, FileInputStream fis, BufferedInputStream bis, String command) throws IOException {
+		File uploadedFile = new File(System.getProperty("user.dir"), commands[1]);
+		if (uploadedFile.exists()) {						
+			byte[] byteFile = new byte[(int)uploadedFile.length()];
+			fis = new FileInputStream(uploadedFile);
+			bis = new BufferedInputStream(fis);
+			bis.read(byteFile, 0, byteFile.length);
+			
+			objectOutput.write(byteFile, 0, byteFile.length);
+			objectOutput.flush();
+			objectOutput.writeUTF(command + " " + uploadedFile.length());
+			objectOutput.flush();
 		}
 	}
 	
