@@ -211,7 +211,7 @@ public class ClientDisplay {
 	 * Method to format date to display to console
 	 */
 	private String currentDate() {
-		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
+		return new SimpleDateFormat("yyyy-MM-dd @ hh:mm").format(new Date());
 	}	
 
 }

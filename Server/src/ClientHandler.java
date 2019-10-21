@@ -289,6 +289,6 @@ public class ClientHandler extends Thread{
 	 * Method to format current date
 	 */
 	private String currentDate() {
-		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
+		return new SimpleDateFormat("yyyy-MM-dd @ hh:mm").format(new Date());
 	}	
 }
