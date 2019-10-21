@@ -19,8 +19,6 @@ public class ClientHandler extends Thread{
 
 	private String CONSOLE_FORMAT = "[%s:%d - %s]: %s";
 	
-	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
-	
 	private int CHUNK_SIZE = 8 * 1024;
 	
 	private Socket socket;
@@ -57,13 +55,14 @@ public class ClientHandler extends Thread{
 					out.writeUTF(e.getMessage());
 					out.flush();
 				} catch (IOException e1) {
-					System.out.println(e1.getMessage());
+					System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress().toString().substring(1), socket.getLocalPort(), currentDate(), "Lost connection with client: " + clientNumber + "\n"));
+					break;
 				}
 			}
 		}
 		
 	}
-	
+
 	private void runCommandLine(String command) throws Exception {
 		
 		String[] commands = command.split(" ");
