@@ -43,7 +43,7 @@ public class ClientHandler extends Thread{
 		
 		System.out.println("working with client: " + clientNumber);
 		
-		while(true) {
+		loop:while(true) {
 			try {
 					in = new DataInputStream(socket.getInputStream());
 					out = new DataOutputStream(socket.getOutputStream());
@@ -91,6 +91,7 @@ public class ClientHandler extends Thread{
 				break;
 				
 			case "exit":
+				executeExit();
 				break;
 			
 			default:
@@ -100,6 +101,12 @@ public class ClientHandler extends Thread{
 		
 		}
 		
+	}
+	
+	private void executeExit() throws IOException {
+		socket.close();
+		in.close();
+		out.close();
 	}
 
 	@SuppressWarnings("resource")

@@ -73,8 +73,6 @@ public class ClientDisplay {
 	
 	public void startConsole() throws Exception {
 		Scanner scan = new Scanner(System.in);
-		FileInputStream fis = null;
-		BufferedInputStream bis = null;
 		
 		while (true) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
@@ -84,11 +82,24 @@ public class ClientDisplay {
 			try {
 				
 				switch (commands[0]) {
+					case "exit":
+					case "Exit":
+						System.out.println("Disconnecting...");
+						
+						objectOutput.writeUTF("exit");
+						socketClient.close();
+						scan.close();
+						
+						System.out.println("Disconnected");
+						break;
+						
 					case "upload":
-						executeUpload(command, commands, fis, bis);
+					case "Upload":
+						executeUpload(command, commands);
 						break;
 					
 					case "download":
+					case "Download":
 						executeDownload(command, commands);
 						break;
 					
@@ -102,15 +113,12 @@ public class ClientDisplay {
 			
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
-			} finally {
-				if (bis != null) bis.close();
 			}
-			
 			
 		}
 	}
 	
-	private void executeUpload(String command, String[] commands, FileInputStream fis, BufferedInputStream bis) throws Exception {
+	private void executeUpload(String command, String[] commands) throws Exception {
 		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name.");
 		
@@ -125,7 +133,7 @@ public class ClientDisplay {
 		objectOutput.flush();
 		
 		byte[] buffer = new byte[CHUNK_SIZE];
-		fis = new FileInputStream(commands[1]);
+		FileInputStream fis = new FileInputStream(commands[1]);
 	
 		int read;
 		while((read = fis.read(buffer)) > 0)
