@@ -1,9 +1,16 @@
+/***********************************************
+ * File: ClientDisplay.java
+ * Author: Jeremy Boulet, Duc-Thien Nguyen
+ * Description: Class containing methods displaying
+ * 				console to client and the connection
+ * 				between client and server
+ *  
+ ************************************************/
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -13,11 +20,11 @@ import java.util.Scanner;
 
 public class ClientDisplay {
 	
-	private String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
+	private final String REGEX_IP_ADDRESS = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b";
 	
-	private String CONSOLE_FORMAT = "[%s:%d - %s]: ";
+	private final String CONSOLE_FORMAT = "[%s:%d - %s]: ";
 	
-	private int CHUNK_SIZE = 8 * 1024;
+	private final int CHUNK_SIZE = 8 * 1024;
 
 	private int portNumber;
 	
@@ -31,21 +38,30 @@ public class ClientDisplay {
 	
 	private boolean isRunning;
 	
+	
+	/*
+	 * Constructor
+	 */
 	public ClientDisplay() {
 		this.isRunning = true;
 	}
 	
+	/*
+	 * Method which displays to client to input Ip address and port number
+	 */
 	public void getInformations() {
 		Scanner scan = new Scanner(System.in);
 		String ipInput = "";
 		int portNumber = 0;
 		
+		// Ask for Ip Address
 		do {
 			System.out.print("Enter a valid Ip Address: ");
 			ipInput = scan.nextLine();
 			
 		} while (!ipInput.matches(REGEX_IP_ADDRESS));
 		
+		// Ask for port number
 		do {
 			try {
 				System.out.print("Enter a valid Port Number between 5000 and 5050: ");
@@ -62,6 +78,11 @@ public class ClientDisplay {
 
 	}
 	
+	/*
+	 * Method used to initialize socket to communicate with server
+	 * It also initialize data output and input stream
+	 */
+	@SuppressWarnings("resource")
 	public void initializeSocket() {
 		try {
 			
@@ -74,7 +95,10 @@ public class ClientDisplay {
 		}
 	}
 	
-	public void startConsole() throws Exception {
+	/*
+	 * Method which displays the console to client
+	 */
+	public void startConsole() {
 		Scanner scan = new Scanner(System.in);
 		
 		while (isRunning) {
@@ -83,10 +107,9 @@ public class ClientDisplay {
 			String[] commands = command.split(" ");
 			
 			try {
-				
-				switch (commands[0]) {
+				// check for command exit, upload or download
+				switch (commands[0].toLowerCase()) {
 					case "exit":
-					case "Exit":
 						System.out.println("Disconnecting...");
 						
 						objectOutput.writeUTF("exit");
@@ -98,12 +121,10 @@ public class ClientDisplay {
 						break;
 						
 					case "upload":
-					case "Upload":
 						executeUpload(command, commands);
 						break;
 					
 					case "download":
-					case "Download":
 						executeDownload(command, commands);
 						break;
 					
@@ -115,13 +136,18 @@ public class ClientDisplay {
 						System.out.println(data);
 				}				
 			
-			} catch (IOException e) {
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 			
 		}
 	}
 	
+	/*
+	 * Method which uploads files to server
+	 * Params: command -> 	String
+	 * 		   commands -> 	String[]
+	 */
 	private void executeUpload(String command, String[] commands) throws Exception {
 		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name.");
@@ -146,6 +172,11 @@ public class ClientDisplay {
 		fis.close();
 	}
 	
+	/*
+	 * Method which downloads files to server
+	 * Params: command -> 	String
+	 * 		   commands -> 	String[]
+	 */
 	private void executeDownload(String command, String[] commands) throws IOException {
 		
 		FileOutputStream fos = null;
@@ -176,6 +207,9 @@ public class ClientDisplay {
 	}
 	
 	
+	/*
+	 * Method to format date to display to console
+	 */
 	private String currentDate() {
 		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
 	}	

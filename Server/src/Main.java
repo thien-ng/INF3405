@@ -1,10 +1,22 @@
+/***********************************************
+ * File: Main.java
+ * Author: Jeremy Boulet, Duc-Thien Nguyen
+ * Description: Main class for server
+ *  
+ ************************************************/
+
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Scanner;
+
 public class Main {
 	
 	private static ServerSocket listener;
-
-	public static void main(String[] args) throws Exception{
+	
+	/*
+	 * Main
+	 */
+	public static void main(String[] args) throws IOException {
 		
 		int clientNumber = 0;
 		int serverPort = getInformations();
@@ -17,7 +29,7 @@ public class Main {
 
 		try {
 			while (true) {
-
+					// Create new thread for every new client connected
 					new ClientHandler(listener.accept(), clientNumber++).start();
 					
 			}
@@ -28,6 +40,10 @@ public class Main {
 		}
 	}
 	
+	
+	/*
+	 * Method to ask user to input port number
+	 */
 	public static int getInformations() {
 		Scanner scan = new Scanner(System.in);
 		int portNumber = 0;

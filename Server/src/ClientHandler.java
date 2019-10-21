@@ -1,3 +1,10 @@
+/***********************************************
+ * File: ClientHandler.java
+ * Author: Jeremy Boulet, Duc-Thien Nguyen
+ * Description: Class to handle request from client
+ *  
+ ************************************************/
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -12,14 +19,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-
-//AJOUTER LE COMMAND LINE CONSOLE FORMAT
-
 public class ClientHandler extends Thread{
 
-	private String CONSOLE_FORMAT = "[%s:%d - %s]: %s";
+	private final String CONSOLE_FORMAT = "[%s:%d - %s]: %s";
 	
-	private int CHUNK_SIZE = 8 * 1024;
+	private final int CHUNK_SIZE = 8 * 1024;
 	
 	private Socket socket;
 	
@@ -31,9 +35,14 @@ public class ClientHandler extends Thread{
 	
 	private boolean isRunning;
 	
-	
 	private String currentDirectory = "";
 	
+	/*
+	 * Constructor
+	 * Param: socket -> Socket
+	 * 		  clientNumber -> int
+	 *
+	 */
 	public ClientHandler(Socket socket, int clientNumber) {
 		this.socket = socket;
 		this.clientNumber = clientNumber;
@@ -42,6 +51,9 @@ public class ClientHandler extends Thread{
 		currentDirectory = System.getProperty("user.dir");
 	}
 	
+	/*
+	 * Method which is run whenever ClientHandler is initialized
+	 */
 	public void run() {
 		
 		System.out.println("working with client: " + clientNumber);
@@ -58,6 +70,8 @@ public class ClientHandler extends Thread{
 					out.writeUTF(e.getMessage());
 					out.flush();
 				} catch (IOException e1) {
+
+					//prints when client is disconnected
 					System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress().toString().substring(1), socket.getLocalPort(), currentDate(), "Lost connection with client: " + clientNumber + "\n"));
 					break;
 				}
@@ -65,7 +79,11 @@ public class ClientHandler extends Thread{
 		}
 		
 	}
-
+	
+	/*
+	 * Method to handle command requested by the client
+	 * param: command -> String
+	 */
 	private void runCommandLine(String command) throws Exception {
 		
 		String[] commands = command.split(" ");
@@ -106,14 +124,20 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	/*
+	 * Method to execute exit command
+	 */
 	private void executeExit() throws IOException {
 		socket.close();
 		in.close();
 		out.close();
 		isRunning = false;
 	}
-
-	@SuppressWarnings("resource")
+	
+	/*
+	 * Method to change directory of user
+	 * param: commands -> String[]
+	 */
 	private void executeCD(String[] commands) throws Exception{
 		if (commands.length == 1) {
 			out.writeUTF("");
@@ -122,6 +146,8 @@ public class ClientHandler extends Thread{
 		}
 
 		File file = new File(currentDirectory);
+		
+		//Search for all directories in current directory
 		String[] directories = file.list(new FilenameFilter() {
 		  @Override
 		  public boolean accept(File current, String name) {
@@ -146,6 +172,10 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	/*
+	 * Method to return all files and directories in current directory
+	 * param: commands -> String[]
+	 */
 	private void executeLS(String[] commands) throws Exception {
 
 		if (commands.length != 1)
@@ -162,6 +192,10 @@ public class ClientHandler extends Thread{
 		out.flush();
 	}
 	
+	/*
+	 * Method to create a new directory in current directory
+	 * param: commands -> String[]
+	 */
 	private void executeMkdir(String[] commands) throws Exception{
 		
 		if (commands.length != 2) 
@@ -179,6 +213,10 @@ public class ClientHandler extends Thread{
 		
 	}
 	
+	/*
+	 * Method to receive uploaded file from client
+	 * param: commands -> String[]
+	 */
 	private void executeUpload(String[] commands) throws Exception {
 		FileOutputStream fos = null;
 		
@@ -204,7 +242,11 @@ public class ClientHandler extends Thread{
 			if (fos != null) fos.close();
 		}	
 	}
-	
+
+	/*
+	 * Method to send to client file
+	 * param: commands -> String[]
+	 */
 	private void executeDownload(String[] commands) throws Exception {
 		
 		if (commands.length != 2)
@@ -228,6 +270,9 @@ public class ClientHandler extends Thread{
 		fis.close();
 	}
 	
+	/*
+	 * Method to format current date
+	 */
 	private String currentDate() {
 		return new SimpleDateFormat("yyyy-MM-dd @ mm:ss").format(new Date());
 	}	
