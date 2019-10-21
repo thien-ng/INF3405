@@ -219,42 +219,6 @@ public class ClientHandler extends Thread{
 			out.write(buffer, 0, read);
 		
 		fis.close();
-//		
-//		
-//		long length = fileWanted.length();
-//		byte[] bytes = new byte[CHUNK_SIZE];
-//		FileInputStream fis = new FileInputStream(fileWanted);
-//		
-//		int count;
-//		while((count = in.read(bytes)) > 0)
-//			out.write(bytes, 0, count);
-//		
-//		out.flush();
-
-		
-//		long fileSizeLeft = fileToDownload.length();
-//		out.writeLong(fileSizeLeft);
-//		byte[] partOfFile = new byte[1000];
-//		
-//		while (fileSizeLeft > 0) {
-//			int size = in.read(partOfFile);
-//			out.write(partOfFile, 0, size);
-//			fileSizeLeft -= size;
-//		}
-		
-		///////////////////////////////////////
-		
-//		FileInputStream fis = new FileInputStream(fileToDownload);
-//		BufferedInputStream bis = new BufferedInputStream(fis);
-//		bis.read(byteFile, 0, byteFile.length);
-//		
-//		out.write(byteFile, 0, byteFile.length);
-//		out.flush();
-//		out.writeUTF(commands[1] + fileToDownload.length());
-//		out.flush();
-//		
-		if (fis != null) fis.close();
-//		if (bis != null) bis.close();
 	}
 	
 	private String currentDate() {
