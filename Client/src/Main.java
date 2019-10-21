@@ -12,8 +12,21 @@ public class Main {
 	public static void main(String[] args) {
 		
 		ClientDisplay clientDisplay = new ClientDisplay();
-		clientDisplay.getInformations();
-		clientDisplay.initializeSocket();
+		
+		boolean isNotConnected = true;
+		
+		while (isNotConnected) {
+			
+			clientDisplay.getInformations();
+			try {
+				clientDisplay.initializeSocket();
+			} catch(Exception e) {
+				System.out.println(e.getMessage());
+				isNotConnected = true;
+				continue;
+			}
+			isNotConnected = false;
+		}
 		clientDisplay.startConsole();
 		
 	}
