@@ -22,7 +22,7 @@ public class ClientDisplay {
 	private int portNumber;
 	
 	private String IpAddress;
-	
+
 	private Socket socketClient;
 	
 	private DataOutputStream objectOutput;

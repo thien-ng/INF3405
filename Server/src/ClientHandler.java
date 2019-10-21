@@ -68,7 +68,7 @@ public class ClientHandler extends Thread{
 		
 		String[] commands = command.split(" ");
 		// TODO remove dash before ip address
-		System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress(), socket.getLocalPort(), currentDate(), command + "\n"));
+		System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress().toString().substring(1), socket.getLocalPort(), currentDate(), command + "\n"));
 		
 		switch(commands[0]) {
 			
@@ -94,6 +94,11 @@ public class ClientHandler extends Thread{
 				
 			case "exit":
 				break;
+			
+			default:
+				out.writeUTF("");
+				out.flush();
+				break;
 		
 		}
 		
@@ -116,7 +121,7 @@ public class ClientHandler extends Thread{
 		  }
 		});
 		List<String> directoryList = Arrays.asList(directories);
-		System.out.println(Arrays.toString(directories));
+		directoryList.replaceAll(String::toLowerCase);
 
 		if (commands[1].equals("..")) {
 			currentDirectory = Paths.get(currentDirectory).getParent().toString();
