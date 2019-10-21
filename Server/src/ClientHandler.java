@@ -67,7 +67,6 @@ public class ClientHandler extends Thread{
 	private void runCommandLine(String command) throws Exception {
 		
 		String[] commands = command.split(" ");
-		// TODO remove dash before ip address
 		System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress().toString().substring(1), socket.getLocalPort(), currentDate(), command + "\n"));
 		
 		switch(commands[0]) {
@@ -96,7 +95,7 @@ public class ClientHandler extends Thread{
 				break;
 			
 			default:
-				out.writeUTF("");
+				out.writeUTF("Unknown command: " + commands[0]);
 				out.flush();
 				break;
 		
