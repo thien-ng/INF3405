@@ -13,8 +13,10 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -158,17 +160,22 @@ public class ClientHandler extends Thread{
 		directoryList.replaceAll(String::toLowerCase);
 
 		if (commands[1].equals("..")) {
+			File directory = new File(currentDirectory);
+			String dirName = directory.getParentFile().getName();
+		
 			currentDirectory = Paths.get(currentDirectory).getParent().toString();
+
+			out.writeUTF("You are currently in directory: " + dirName);
+			out.flush();
 			
 		} else if (directoryList.contains(commands[1].toLowerCase())) {
 			currentDirectory += "\\" + commands[1];
+			out.writeUTF("You are currently in directory: " + commands[1]);
+			out.flush();
 			
 		} else {
 			throw new Exception("The system cannot find the path specified.");
 		}
-		
-		out.writeUTF("");
-		out.flush();
 		
 	}
 	
@@ -181,10 +188,19 @@ public class ClientHandler extends Thread{
 		if (commands.length != 1)
 			throw new Exception("Unknown command");
 		
-		File file = new File(currentDirectory);
-		String[] directories = file.list();
+		File folder = new File(currentDirectory);
+		List<String> files = new ArrayList<>();
+		
+		for (File fileEntry : folder.listFiles()) {
+			if (fileEntry.isDirectory()) {
+				files.add("[Folder] " + fileEntry.getName());
+			} else {
+				files.add("[File] " + fileEntry.getName());
+			}
+		}
+		
 		String filenames = "";
-		for (String name : directories) {
+		for (String name : files) {
 			filenames += (name + "\n");
 		}
 
@@ -207,7 +223,7 @@ public class ClientHandler extends Thread{
 			throw new Exception("Directory already exist");
 		} else {
 			directory.mkdirs();
-			out.writeUTF("");
+			out.writeUTF("Folder " + commands[1] + " has been created");
 			out.flush();
 		}
 		
