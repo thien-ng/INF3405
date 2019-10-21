@@ -267,7 +267,7 @@ public class ClientHandler extends Thread{
 		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name");
 		
-		File fileWanted = new File(System.getProperty("user.dir"), commands[1]);
+		File fileWanted = new File(currentDirectory, commands[1]);
 		
 		if (!fileWanted.exists())
 			throw new Exception("The file specified does not exist in the current repository");
