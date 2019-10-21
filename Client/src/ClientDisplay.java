@@ -71,7 +71,7 @@ public class ClientDisplay {
 		}
 	}
 	
-	public void startConsole() throws IOException {
+	public void startConsole() throws Exception {
 		Scanner scan = new Scanner(System.in);
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
@@ -110,22 +110,28 @@ public class ClientDisplay {
 		}
 	}
 	
-	private void executeUpload(String command, String[] commands, FileInputStream fis, BufferedInputStream bis) throws IOException {
-		File uploadedFile = new File(System.getProperty("user.dir"), commands[1]);
-		if (uploadedFile.exists()) {	
-			
-			objectOutput.writeInt((int) uploadedFile.length());
-			objectOutput.flush();
-			
-			byte[] buffer = new byte[CHUNK_SIZE];
-			fis = new FileInputStream(commands[1]);
+	private void executeUpload(String command, String[] commands, FileInputStream fis, BufferedInputStream bis) throws Exception {
+		if (commands.length != 2)
+			throw new Exception("Must contain argument for file name.");
 		
-			int read;
-			while((read = fis.read(buffer)) > 0)
-				objectOutput.write(buffer, 0, read);
+		File uploadedFile = new File(System.getProperty("user.dir"), commands[1]);
+		
+		if (!uploadedFile.exists()) 	
+			throw new Exception("File name does not exist.");
+		
+		objectOutput.writeUTF(command);	
 			
-			fis.close();
-		}
+		objectOutput.writeInt((int) uploadedFile.length());
+		objectOutput.flush();
+		
+		byte[] buffer = new byte[CHUNK_SIZE];
+		fis = new FileInputStream(commands[1]);
+	
+		int read;
+		while((read = fis.read(buffer)) > 0)
+			objectOutput.write(buffer, 0, read);
+		
+		fis.close();
 	}
 	
 	private void executeDownload(String command, String[] commands) throws IOException {
