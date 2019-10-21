@@ -170,31 +170,43 @@ public class ClientHandler extends Thread{
 	
 	private void executeUpload(String[] commands) throws Exception {
 		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
 		
-		if (commands.length != 3)
+		
+		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name.");
 		
 		try {			
-			int fileSize = Integer.parseInt(commands[2]);
-			byte[] byteArray = new byte [fileSize];
-			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
-			bos = new BufferedOutputStream(fos);
-			int read = in.read(byteArray, 0, byteArray.length);
-			int current = read;
+			fos = new FileOutputStream(currentDirectory + "\\" + commands[1]);
 			
-			while (read > 0) {
-				read = in.read(byteArray, current, (byteArray.length - current));
-				if (read >= 1) current += read;
+			byte[] buffer = new byte[CHUNK_SIZE];
+			
+			int fileSize = in.readInt();
+			int read = 0;
+			int remaining = fileSize;
+			
+			while((read = in.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
+				remaining -= read;
+				fos.write(buffer, 0, read);
 			}
 			
-			bos.write(byteArray, 0, current);
-			bos.flush();
+//			int fileSize = Integer.parseInt(commands[2]);
+//			byte[] byteArray = new byte [fileSize];
+//			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
+//			bos = new BufferedOutputStream(fos);
+//			int read = in.read(byteArray, 0, byteArray.length);
+//			int current = read;
+//			
+//			while (read > 0) {
+//				read = in.read(byteArray, current, (byteArray.length - current));
+//				if (read >= 1) current += read;
+//			}
+//			
+//			bos.write(byteArray, 0, current);
+//			bos.flush();
 		} catch (NumberFormatException e) {
 			System.out.println("Arg error: " + e.getMessage());
 		} finally {
 			if (fos != null) fos.close();
-			if (bos != null) bos.close();
 		}	
 	}
 	

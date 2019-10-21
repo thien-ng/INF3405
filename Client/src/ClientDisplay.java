@@ -112,16 +112,19 @@ public class ClientDisplay {
 	
 	private void executeUpload(String command, String[] commands, FileInputStream fis, BufferedInputStream bis) throws IOException {
 		File uploadedFile = new File(System.getProperty("user.dir"), commands[1]);
-		if (uploadedFile.exists()) {						
-			byte[] byteFile = new byte[(int)uploadedFile.length()];
-			fis = new FileInputStream(uploadedFile);
-			bis = new BufferedInputStream(fis);
-			bis.read(byteFile, 0, byteFile.length);
+		if (uploadedFile.exists()) {	
 			
-			objectOutput.write(byteFile, 0, byteFile.length);
+			objectOutput.writeInt((int) uploadedFile.length());
 			objectOutput.flush();
-			objectOutput.writeUTF(command + " " + uploadedFile.length());
-			objectOutput.flush();
+			
+			byte[] buffer = new byte[CHUNK_SIZE];
+			fis = new FileInputStream(commands[1]);
+		
+			int read;
+			while((read = fis.read(buffer)) > 0)
+				objectOutput.write(buffer, 0, read);
+			
+			fis.close();
 		}
 	}
 	
@@ -136,15 +139,15 @@ public class ClientDisplay {
 			String currentDirectory = System.getProperty("user.dir");
 			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);			
 			
-			byte[] bytes = new byte[CHUNK_SIZE];
+			byte[] buffer = new byte[CHUNK_SIZE];
 			
 			int fileSize = objectInput.readInt();
 			int read = 0;
 			int remaining = fileSize;
 			
-			while((read = objectInput.read(bytes, 0, Math.min(bytes.length, remaining))) > 0 ) {
+			while((read = objectInput.read(buffer, 0, Math.min(buffer.length, remaining))) > 0 ) {
 				remaining -= read;
-				fos.write(bytes, 0 , read);
+				fos.write(buffer, 0 , read);
 			}
 			
 		} catch (NumberFormatException e) {
