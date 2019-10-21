@@ -275,7 +275,7 @@ public class ClientHandler extends Thread{
 		out.writeInt((int)fileWanted.length());
 		out.flush();
 		
-		FileInputStream fis = new FileInputStream(commands[1]);
+		FileInputStream fis = new FileInputStream(currentDirectory + "//" +commands[1]);
 		byte[] buffer = new byte[CHUNK_SIZE];
 		
 		int read;
