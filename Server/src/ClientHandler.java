@@ -101,8 +101,7 @@ public class ClientHandler extends Thread{
 		}
 		
 	}
-	
-	// PROBLEME AVEC CD pour ~directoryList.contains(commands[1].toLowerCase()
+
 	@SuppressWarnings("resource")
 	private void executeCD(String[] commands) throws Exception{
 		if (commands.length == 1) {
