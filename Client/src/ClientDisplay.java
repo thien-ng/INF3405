@@ -32,7 +32,7 @@ public class ClientDisplay {
 	private boolean isRunning;
 	
 	public ClientDisplay() {
-		this.isRunning = false;
+		this.isRunning = true;
 	}
 	
 	public void getInformations() {
