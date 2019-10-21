@@ -1,5 +1,3 @@
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -171,7 +169,6 @@ public class ClientHandler extends Thread{
 	private void executeUpload(String[] commands) throws Exception {
 		FileOutputStream fos = null;
 		
-		
 		if (commands.length != 2)
 			throw new Exception("Must contain argument for file name.");
 		
@@ -188,21 +185,6 @@ public class ClientHandler extends Thread{
 				remaining -= read;
 				fos.write(buffer, 0, read);
 			}
-			
-//			int fileSize = Integer.parseInt(commands[2]);
-//			byte[] byteArray = new byte [fileSize];
-//			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);
-//			bos = new BufferedOutputStream(fos);
-//			int read = in.read(byteArray, 0, byteArray.length);
-//			int current = read;
-//			
-//			while (read > 0) {
-//				read = in.read(byteArray, current, (byteArray.length - current));
-//				if (read >= 1) current += read;
-//			}
-//			
-//			bos.write(byteArray, 0, current);
-//			bos.flush();
 		} catch (NumberFormatException e) {
 			System.out.println("Arg error: " + e.getMessage());
 		} finally {
