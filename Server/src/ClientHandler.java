@@ -29,12 +29,15 @@ public class ClientHandler extends Thread{
 
 	private int clientNumber;
 	
+	private boolean isRunning;
+	
 	
 	private String currentDirectory = "";
 	
 	public ClientHandler(Socket socket, int clientNumber) {
 		this.socket = socket;
 		this.clientNumber = clientNumber;
+		this.isRunning = true;
 		
 		currentDirectory = System.getProperty("user.dir");
 	}
@@ -43,7 +46,7 @@ public class ClientHandler extends Thread{
 		
 		System.out.println("working with client: " + clientNumber);
 		
-		loop:while(true) {
+		while(isRunning) {
 			try {
 					in = new DataInputStream(socket.getInputStream());
 					out = new DataOutputStream(socket.getOutputStream());
@@ -107,6 +110,7 @@ public class ClientHandler extends Thread{
 		socket.close();
 		in.close();
 		out.close();
+		isRunning = false;
 	}
 
 	@SuppressWarnings("resource")

@@ -29,7 +29,10 @@ public class ClientDisplay {
 	
 	private DataInputStream objectInput;
 	
+	private boolean isRunning;
+	
 	public ClientDisplay() {
+		this.isRunning = false;
 	}
 	
 	public void getInformations() {
@@ -74,7 +77,7 @@ public class ClientDisplay {
 	public void startConsole() throws Exception {
 		Scanner scan = new Scanner(System.in);
 		
-		while (true) {
+		while (isRunning) {
 			System.out.print(String.format(CONSOLE_FORMAT, IpAddress, portNumber, currentDate()));
 			String command = scan.nextLine();	
 			String[] commands = command.split(" ");
@@ -89,6 +92,7 @@ public class ClientDisplay {
 						objectOutput.writeUTF("exit");
 						socketClient.close();
 						scan.close();
+						isRunning = false;
 						
 						System.out.println("Disconnected");
 						break;
