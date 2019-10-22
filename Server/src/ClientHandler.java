@@ -256,7 +256,10 @@ public class ClientHandler extends Thread{
 				remaining -= read;
 				fos.write(buffer, 0, read);
 			}
+			
+			out.writeBoolean(true);
 		} catch (NumberFormatException e) {
+			out.writeBoolean(true);
 			System.out.println("Arg error: " + e.getMessage());
 		} finally {
 			if (fos != null) fos.close();

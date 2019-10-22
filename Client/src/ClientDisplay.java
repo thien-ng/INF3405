@@ -166,6 +166,9 @@ public class ClientDisplay {
 			objectOutput.write(buffer, 0, read);
 		
 		fis.close();
+		
+		String message = objectInput.readBoolean() ? "File uploaded" : "Error while uploading";
+		System.out.println(message);
 	}
 	
 	/*
