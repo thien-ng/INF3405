@@ -140,8 +140,9 @@ public class ClientDisplay {
 	
 	/*
 	 * Méthode qui upload un fichier au serveur
-	 * Params: command -> 	String
-	 * 		   commands -> 	String[]
+	 * Params: command -> 	String : commande fait par le client
+	 * 		   commands -> 	String[] : Tableau des commandes fait par le client
+	 * Throws: Exception
 	 */
 	private void executeUpload(String command, String[] commands) throws Exception {
 		if (commands.length != 2)
@@ -169,8 +170,9 @@ public class ClientDisplay {
 	
 	/*
 	 * Méthode qui download un fichier du serveur
-	 * Params: command -> 	String
-	 * 		   commands -> 	String[]
+	 * Params: command -> 	String : commande fait par le client
+	 * 		   commands -> 	String[] : Tableau des commandes fait par le client
+	 * Throws: IOException
 	 */
 	private void executeDownload(String command, String[] commands) throws IOException {
 		

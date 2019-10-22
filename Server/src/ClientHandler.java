@@ -40,9 +40,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Constructeur
-	 * Param: socket -> Socket
-	 * 		  clientNumber -> int
-	 *
+	 * Param: socket -> Socket : Socket connecté avec le client
+	 * 		  clientNumber -> int : Le numéro de client
 	 */
 	public ClientHandler(Socket socket, int clientNumber) {
 		this.socket = socket;
@@ -83,7 +82,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode pour gérer les commandes du client
-	 * param: command -> String
+	 * param: command -> String : Commande fait par le client
+	 * Throws: Exception
 	 */
 	private void runCommandLine(String command) throws Exception {
 		
@@ -127,6 +127,7 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode qui se charge de gérer la déconnexion d'un client
+	 * Throws: IOException
 	 */
 	private void executeExit() throws IOException {
 		socket.close();
@@ -137,7 +138,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode utilisé pour changer de répertoire
-	 * param: commands -> String[]
+	 * param: commands -> String[] : Tableau des commandes fait par le client
+	 * throws: Exception
 	 */
 	private void executeCD(String[] commands) throws Exception{
 		if (commands.length == 1) {
@@ -180,7 +182,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode qui retourne tous les fichiers et dossiers dans le dosier actuel
-	 * param: commands -> String[]
+	 * param: commands -> String[] : Tableau des commandes fait par le client
+	 * throws: Exception
 	 */
 	private void executeLS(String[] commands) throws Exception {
 
@@ -209,7 +212,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode pour créer un dossier a l'intérieur du dossier actuel
-	 * param: commands -> String[]
+	 * param: commands -> String[]: Tableau des commandes fait par le client
+	 * throws: Exception
 	 */
 	private void executeMkdir(String[] commands) throws Exception{
 		
@@ -230,7 +234,8 @@ public class ClientHandler extends Thread{
 	
 	/*
 	 * Méthode qui recoit le fichier téléchargé du client
-	 * param: commands -> String[]
+	 * param: commands -> String[]: Tableau des commandes fait par le client
+	 * throws: Exception
 	 */
 	private void executeUpload(String[] commands) throws Exception {
 		FileOutputStream fos = null;
@@ -260,7 +265,8 @@ public class ClientHandler extends Thread{
 
 	/*
 	 * Méthode qui envoit un fichier au client
-	 * param: commands -> String[]
+	 * param: commands -> String[]: Tableau des commandes fait par le client
+	 * throws: Exception
 	 */
 	private void executeDownload(String[] commands) throws Exception {
 		
