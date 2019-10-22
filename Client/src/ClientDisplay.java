@@ -84,16 +84,11 @@ public class ClientDisplay {
 	 */
 	@SuppressWarnings("resource")
 	public void initializeSocket() throws Exception{
-//		try {
-			
-			socketClient = new Socket(IpAddress, portNumber);
-			objectOutput = new DataOutputStream(socketClient.getOutputStream());
-			objectInput = new DataInputStream(socketClient.getInputStream());
-//	
-//		} catch(Exception e) {
-//			System.out.println(e.getMessage());
-//			getInformations();
-//		}
+		
+		socketClient = new Socket(IpAddress, portNumber);
+		objectOutput = new DataOutputStream(socketClient.getOutputStream());
+		objectInput = new DataInputStream(socketClient.getInputStream());
+
 	}
 	
 	/*
