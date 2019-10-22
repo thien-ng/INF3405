@@ -269,8 +269,8 @@ public class ClientHandler extends Thread{
 		
 		File fileWanted = new File(currentDirectory, commands[1]);
 		
-		if (!fileWanted.exists())
-			throw new Exception("The file specified does not exist in the current repository");
+		out.writeBoolean(fileWanted.exists());
+		out.flush();
 		
 		out.writeLong(fileWanted.length());
 		out.flush();

@@ -179,6 +179,10 @@ public class ClientDisplay {
 		objectOutput.writeUTF(command);
 		objectOutput.flush();
 		
+		// return si le fichier existe pas
+		if (!objectInput.readBoolean())
+			return;
+		
 		try {			
 			String currentDirectory = System.getProperty("user.dir");
 			fos = new FileOutputStream(currentDirectory + "\\" +  commands[1]);			
@@ -193,6 +197,8 @@ public class ClientDisplay {
 				remaining -= read;
 				fos.write(buffer, 0 , read);
 			}
+			
+			System.out.println("File downloaded");
 			
 		} catch (NumberFormatException e) {
 			System.out.println("Arg error: " + e.getMessage());
