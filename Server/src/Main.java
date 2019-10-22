@@ -29,7 +29,7 @@ public class Main {
 
 		try {
 			while (true) {
-					// Create new thread for every new client connected
+					// Créer un nouveau thread a chaque nouvelle connexion de client
 					new ClientHandler(listener.accept(), clientNumber++).start();
 					
 			}
@@ -42,7 +42,7 @@ public class Main {
 	
 	
 	/*
-	 * Method to ask user to input port number
+	 * Méthode qui demande a l'utilisateur de choisir un numero de port
 	 */
 	public static int getInformations() {
 		Scanner scan = new Scanner(System.in);

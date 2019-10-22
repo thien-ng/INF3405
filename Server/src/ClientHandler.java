@@ -39,7 +39,7 @@ public class ClientHandler extends Thread{
 	private String currentDirectory = "";
 	
 	/*
-	 * Constructor
+	 * Constructeur
 	 * Param: socket -> Socket
 	 * 		  clientNumber -> int
 	 *
@@ -53,7 +53,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method which is run whenever ClientHandler is initialized
+	 * Méthode exécutée a l'initialisation d'un nouveau ClientHandler
 	 */
 	public void run() {
 		
@@ -72,7 +72,7 @@ public class ClientHandler extends Thread{
 					out.flush();
 				} catch (IOException e1) {
 
-					//prints when client is disconnected
+					// Affiche un message lorsque le clien se déconnecte
 					System.out.print(String.format(CONSOLE_FORMAT, socket.getLocalAddress().toString().substring(1), socket.getLocalPort(), currentDate(), "Lost connection with client: " + clientNumber + "\n"));
 					break;
 				}
@@ -82,7 +82,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to handle command requested by the client
+	 * Méthode pour gérer les commandes du client
 	 * param: command -> String
 	 */
 	private void runCommandLine(String command) throws Exception {
@@ -126,7 +126,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to execute exit command
+	 * Méthode qui se charge de gérer la déconnexion d'un client
 	 */
 	private void executeExit() throws IOException {
 		socket.close();
@@ -136,7 +136,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to change directory of user
+	 * Méthode utilisé pour changer de répertoire
 	 * param: commands -> String[]
 	 */
 	private void executeCD(String[] commands) throws Exception{
@@ -148,7 +148,7 @@ public class ClientHandler extends Thread{
 
 		File file = new File(currentDirectory);
 		
-		//Search for all directories in current directory
+		//Cherche pour tous les dossiers dans le dossier actuel
 		String[] directories = file.list(new FilenameFilter() {
 		  @Override
 		  public boolean accept(File current, String name) {
@@ -179,7 +179,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to return all files and directories in current directory
+	 * Méthode qui retourne tous les fichiers et dossiers dans le dosier actuel
 	 * param: commands -> String[]
 	 */
 	private void executeLS(String[] commands) throws Exception {
@@ -208,7 +208,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to create a new directory in current directory
+	 * Méthode pour créer un dossier a l'intérieur du dossier actuel
 	 * param: commands -> String[]
 	 */
 	private void executeMkdir(String[] commands) throws Exception{
@@ -229,7 +229,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to receive uploaded file from client
+	 * Méthode qui recoit le fichier téléchargé du client
 	 * param: commands -> String[]
 	 */
 	private void executeUpload(String[] commands) throws Exception {
@@ -243,11 +243,11 @@ public class ClientHandler extends Thread{
 			
 			byte[] buffer = new byte[CHUNK_SIZE];
 			
-			int fileSize = in.readInt();
+			long fileSize = in.readLong();
 			int read = 0;
-			int remaining = fileSize;
+			long remaining = fileSize;
 			
-			while((read = in.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
+			while((read = in.read(buffer, 0, Math.min(buffer.length, (int) remaining))) > 0) {
 				remaining -= read;
 				fos.write(buffer, 0, read);
 			}
@@ -259,7 +259,7 @@ public class ClientHandler extends Thread{
 	}
 
 	/*
-	 * Method to send to client file
+	 * Méthode qui envoit un fichier au client
 	 * param: commands -> String[]
 	 */
 	private void executeDownload(String[] commands) throws Exception {
@@ -272,7 +272,7 @@ public class ClientHandler extends Thread{
 		if (!fileWanted.exists())
 			throw new Exception("The file specified does not exist in the current repository");
 		
-		out.writeInt((int)fileWanted.length());
+		out.writeLong(fileWanted.length());
 		out.flush();
 		
 		FileInputStream fis = new FileInputStream(currentDirectory + "//" +commands[1]);
@@ -286,7 +286,7 @@ public class ClientHandler extends Thread{
 	}
 	
 	/*
-	 * Method to format current date
+	 * Méthode pour formater la date
 	 */
 	private String currentDate() {
 		return new SimpleDateFormat("yyyy-MM-dd @ hh:mm").format(new Date());

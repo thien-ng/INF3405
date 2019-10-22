@@ -40,28 +40,28 @@ public class ClientDisplay {
 	
 	
 	/*
-	 * Constructor
+	 * Constructeur
 	 */
 	public ClientDisplay() {
 		this.isRunning = true;
 	}
 	
 	/*
-	 * Method which displays to client to input Ip address and port number
+	 * Méthode qui demande au client l'ip et le port du serveur
 	 */
 	public void getInformations() {
 		Scanner scan = new Scanner(System.in);
 		String ipInput = "";
 		int portNumber = 0;
 		
-		// Ask for Ip Address
+		// Demande pour l'ip
 		do {
 			System.out.print("Enter a valid Ip Address: ");
 			ipInput = scan.nextLine();
 			
 		} while (!ipInput.matches(REGEX_IP_ADDRESS));
 		
-		// Ask for port number
+		// Demande pour le port
 		do {
 			try {
 				System.out.print("Enter a valid Port Number between 5000 and 5050: ");
@@ -79,8 +79,8 @@ public class ClientDisplay {
 	}
 	
 	/*
-	 * Method used to initialize socket to communicate with server
-	 * It also initialize data output and input stream
+	 *  Méthode utilisée pour initialiser le socket pour communiquer avec le serveur
+	 *  Elle initialise aussi data output et input stream
 	 */
 	@SuppressWarnings("resource")
 	public void initializeSocket() throws Exception{
@@ -92,7 +92,7 @@ public class ClientDisplay {
 	}
 	
 	/*
-	 * Method which displays the console to client
+	 * Méthode qui affiche la console au client
 	 */
 	public void startConsole() {
 		Scanner scan = new Scanner(System.in);
@@ -103,7 +103,6 @@ public class ClientDisplay {
 			String[] commands = command.split(" ");
 			
 			try {
-				// check for command exit, upload or download
 				switch (commands[0].toLowerCase()) {
 					case "exit":
 						System.out.println("Disconnecting...");
@@ -140,7 +139,7 @@ public class ClientDisplay {
 	}
 	
 	/*
-	 * Method which uploads files to server
+	 * Méthode qui upload un fichier au serveur
 	 * Params: command -> 	String
 	 * 		   commands -> 	String[]
 	 */
@@ -155,7 +154,7 @@ public class ClientDisplay {
 		
 		objectOutput.writeUTF(command);	
 			
-		objectOutput.writeInt((int) uploadedFile.length());
+		objectOutput.writeLong( uploadedFile.length());
 		objectOutput.flush();
 		
 		byte[] buffer = new byte[CHUNK_SIZE];
@@ -169,7 +168,7 @@ public class ClientDisplay {
 	}
 	
 	/*
-	 * Method which downloads files to server
+	 * Méthode qui download un fichier du serveur
 	 * Params: command -> 	String
 	 * 		   commands -> 	String[]
 	 */
@@ -186,11 +185,11 @@ public class ClientDisplay {
 			
 			byte[] buffer = new byte[CHUNK_SIZE];
 			
-			int fileSize = objectInput.readInt();
+			long fileSize = objectInput.readLong();
 			int read = 0;
-			int remaining = fileSize;
+			long remaining = fileSize;
 			
-			while((read = objectInput.read(buffer, 0, Math.min(buffer.length, remaining))) > 0 ) {
+			while((read = objectInput.read(buffer, 0, Math.min(buffer.length, (int)remaining))) > 0 ) {
 				remaining -= read;
 				fos.write(buffer, 0 , read);
 			}
@@ -204,7 +203,7 @@ public class ClientDisplay {
 	
 	
 	/*
-	 * Method to format date to display to console
+	 * Méthode pour formater la date
 	 */
 	private String currentDate() {
 		return new SimpleDateFormat("yyyy-MM-dd @ hh:mm").format(new Date());
